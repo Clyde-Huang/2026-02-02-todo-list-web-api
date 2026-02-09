@@ -1,0 +1,28 @@
+{
+  "name": "2026-02-02-todo-list-web-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Clyde-Huang/2026-02-02-todo-list-web-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Clyde-Huang/2026-02-02-todo-list-web-api/issues"
+  },
+  "homepage": "https://github.com/Clyde-Huang/2026-02-02-todo-list-web-api#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.3.0",
+    "prettier": "^3.8.1"
+  }
+}
