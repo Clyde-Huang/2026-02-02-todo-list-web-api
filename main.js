@@ -58,6 +58,7 @@ function render() {
   }
 
   let showList = todoList;
+  console.log(showList); // 強制使用
 
   // 根據篩選條件過濾
   switch (currentFilter) {
