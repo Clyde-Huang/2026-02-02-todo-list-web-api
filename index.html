@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <link
       rel="shortcut icon"
       href="https://upload.cc/i1/2022/03/23/yOW5kv.png"
@@ -13,8 +12,8 @@
       src="https://kit.fontawesome.com/0f3f38a034.js"
       crossorigin="anonymous"
     ></script>
-
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./adjust.css" />
     <title>ToDo List</title>
   </head>
 
@@ -36,33 +35,26 @@
           />
         </div>
         <div>
-          <form class="formControls" action="index.html">
+          <form class="formControls" id="loginForm">
             <h2 class="formControls_txt">最實用的線上代辦事項服務</h2>
-            <label class="formControls_label" for="email">Email</label>
+            <label class="formControls_label" for="loginEmail">Email</label>
             <input
               class="formControls_input"
-              type="text"
-              id="email"
-              name="email"
+              type="email"
+              id="loginEmail"
               placeholder="請輸入 email"
               required
             />
-            <span>此欄位不可留空</span>
-            <label class="formControls_label" for="pwd">密碼</label>
+            <span class="error-msg"></span>
+            <label class="formControls_label" for="loginPwd">密碼</label>
             <input
               class="formControls_input"
               type="password"
-              name="pwd"
-              id="pwd"
+              id="loginPwd"
               placeholder="請輸入密碼"
               required
             />
-            <input
-              class="formControls_btnSubmit"
-              type="button"
-              onclick="javascript: location.href = '#todoListPage';"
-              value="登入"
-            />
+            <button class="formControls_btnSubmit" type="submit">登入</button>
             <a class="formControls_btnLink" href="#signUpPage">註冊帳號</a>
           </form>
         </div>
@@ -70,7 +62,7 @@
     </div>
 
     <!-- sign up -->
-    <div id="signUpPage" class="bg-yellow">
+    <div id="signUpPage" class="bg-yellow" style="display: none">
       <div class="conatiner signUpPage vhContainer">
         <div class="side">
           <a href="#"
@@ -86,49 +78,46 @@
           />
         </div>
         <div>
-          <form class="formControls" action="index.html">
+          <form class="formControls" id="signUpForm">
             <h2 class="formControls_txt">註冊帳號</h2>
-            <label class="formControls_label" for="email">Email</label>
+            <label class="formControls_label" for="signUpEmail">Email</label>
             <input
               class="formControls_input"
-              type="text"
-              id="email"
-              name="email"
+              type="email"
+              id="signUpEmail"
               placeholder="請輸入 email"
               required
             />
-            <label class="formControls_label" for="name">您的暱稱</label>
+            <label class="formControls_label" for="signUpNickname"
+              >您的暱稱</label
+            >
             <input
               class="formControls_input"
               type="text"
-              name="name"
-              id="name"
+              id="signUpNickname"
               placeholder="請輸入您的暱稱"
             />
-            <label class="formControls_label" for="pwd">密碼</label>
+            <label class="formControls_label" for="signUpPwd">密碼</label>
             <input
               class="formControls_input"
               type="password"
-              name="pwd"
-              id="pwd"
+              id="signUpPwd"
               placeholder="請輸入密碼"
               required
             />
-            <label class="formControls_label" for="pwd">再次輸入密碼</label>
+            <label class="formControls_label" for="signUpPwd2"
+              >再次輸入密碼</label
+            >
             <input
               class="formControls_input"
               type="password"
-              name="pwd"
-              id="pwd"
+              id="signUpPwd2"
               placeholder="請再次輸入密碼"
               required
             />
-            <input
-              class="formControls_btnSubmit"
-              type="button"
-              onclick="javascript: location.href = '#todoListPage';"
-              value="註冊帳號"
-            />
+            <button class="formControls_btnSubmit" type="submit">
+              註冊帳號
+            </button>
             <a class="formControls_btnLink" href="#loginPage">登入</a>
           </form>
         </div>
@@ -136,120 +125,44 @@
     </div>
 
     <!-- ToDo List -->
-    <div id="todoListPage" class="bg-half">
+    <div id="todoListPage" class="bg-half" style="display: none">
       <nav>
         <h1><a href="#">ONLINE TODO LIST</a></h1>
         <ul>
           <li class="todo_sm">
-            <a href="#"><span>王小明的代辦</span></a>
+            <a href="#"><span id="userName">使用者</span>的代辦</a>
           </li>
-          <li><a href="#loginPage">登出</a></li>
+          <li><a href="#" id="logoutBtn">登出</a></li>
         </ul>
       </nav>
       <div class="conatiner todoListPage vhContainer">
         <div class="todoList_Content">
           <div class="inputBox">
-            <input type="text" placeholder="請輸入待辦事項" />
-            <a href="#">
+            <input type="text" id="todoInput" placeholder="請輸入待辦事項" />
+            <a href="#" id="addTodoBtn">
               <i class="fa fa-plus"></i>
             </a>
           </div>
           <div class="todoList_list">
             <ul class="todoList_tab">
-              <li><a href="#" class="active">全部</a></li>
-              <li><a href="#">待完成</a></li>
-              <li><a href="#">已完成</a></li>
+              <li><a href="#" id="tabAll" class="active">全部</a></li>
+              <li><a href="#" id="tabUncompleted">待完成</a></li>
+              <li><a href="#" id="tabCompleted">已完成</a></li>
             </ul>
             <div class="todoList_items">
-              <ul class="todoList_item">
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>把冰箱發霉的檸檬拿去丟</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>打電話叫媽媽匯款給我</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>整理電腦資料夾</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>繳電費水費瓦斯費</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>約vicky禮拜三泡溫泉</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
-                <li>
-                  <label class="todoList_label">
-                    <input
-                      class="todoList_input"
-                      type="checkbox"
-                      value="true"
-                    />
-                    <span>約ada禮拜四吃晚餐</span>
-                  </label>
-                  <a href="#">
-                    <i class="fa fa-times"></i>
-                  </a>
-                </li>
+              <ul class="todoList_item" id="todoListContainer">
+                <!-- 待辦事項將動態插入這裡 -->
               </ul>
               <div class="todoList_statistics">
-                <p>5 個已完成項目</p>
-                <a href="#">清除已完成項目</a>
+                <p id="todoStatistics">0 個已完成項目</p>
+                <a href="#" id="clearCompletedBtn">清除已完成項目</a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
     <script src="./api.js"></script>
     <script src="./main.js"></script>
   </body>

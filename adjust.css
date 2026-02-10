@@ -1,0 +1,9 @@
+.delBtn {
+  font-size: 32px;
+  transform: translateY(-6px);
+}
+
+.no_todo{
+  text-align: center;
+  color: #d6891d;
+}

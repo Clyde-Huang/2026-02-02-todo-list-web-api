@@ -29,13 +29,17 @@ function clearToken() {
 // 1.註冊
 // POST /users/sign_up
 
-async function signUp(email, password) {
+async function signUp(email, password, nickname) {
   const res = await fetch(`${API}/users/sign_up`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ 
+      email, 
+      password,
+      nickname: nickname || email.split('@')[0]
+    })
   });
 
   const data = await res.json();
@@ -143,9 +147,4 @@ async function toggleTodo(id) {
   });
 
   return res.json();
-}
-
-// 頁面刷新時，如果有 token，自動載入 todos
-if (getToken()) {
-  loadTodos();
 }

@@ -22,6 +22,9 @@ export default defineConfig([
     rules: {
       ...js.configs.recommended.rules,
 
+      // 完全禁止 alert
+      "no-alert": "error",
+
       // 允許使用 console，但會警告，專案後可在裝打包時移除 console
       "no-console": "warn",
 
