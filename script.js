@@ -1,142 +1,151 @@
-import Server from "./server";
+// 基本設定
+const API = "https://todolist-api.hexschool.io";
 
-const app = new Server();
+// ************************************************
+// 把需要的都列出來
+// 註冊、登入、登出、查/增/刪/改狀態 todo
+// 再一一處理 fetch
+// ************************************************
 
-// ===============================
-// 暫存 token（教學版）
-// ===============================
-let TOKEN = null;
+// =====================================================
+// Token 放 localStorage :好配合 github page / 簡單
+// =====================================================
 
-// ===============================
-// 登入
-// POST /login
-// ===============================
-app.post('/login', async (req) => {
-  const { email, password } = req.body;
+// 取得 token 方法
+function getToken() {
+  return localStorage.getItem("token");
+}
 
-  const res = await fetch(
-    'https://todolist-api.hexschool.io/users/sign_in',
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    }
-  );
+// 儲存 token 方法
+function setToken(token) {
+  localStorage.setItem("token", token);
+}
+
+// 清除 token 方法
+function clearToken() {
+  localStorage.removeItem("token");
+}
+
+// 1.註冊
+// POST /users/sign_up
+
+async function signUp(email, password) {
+  const res = await fetch(`${API}/users/sign_up`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+  return data;
+}
+
+// 2.登入
+// POST /users/sign_in
+
+async function login(email, password) {
+  const res = await fetch(`${API}/users/sign_in`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ email, password })
+  });
 
   const data = await res.json();
 
   // 登入成功 → 存 token
   if (data.status) {
-    TOKEN = data.token;
-    return { success: true };
+    setToken(data.token);
   }
 
-  return { success: false, message: data.message };
-});
-
-// ===============================
-// 登出
-// POST /logout
-// ===============================
-app.post('/logout', async () => {
-  const res = await fetch(
-    'https://todolist-api.hexschool.io/users/sign_out',
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${TOKEN}`
-      }
-    }
-  );
-
-  const data = await res.json();
-
-  // 清空 token
-  TOKEN = null;
-
   return data;
-});
+}
+
+// 3.登出
+// POST /users/sign_out
+
+async function logout() {
+  const token = getToken();
+
+  // 通知後端登出（非必須，但有 API）
+  await fetch(`${API}/users/sign_out`, {
+    method: "POST",
+    headers: {
+      authorization: token
+    }
+  });
+
+  // 前端要清 token 但後端 token 還在?
+  clearToken();
+}
 
 // ===============================
-// 取得 todos
+// Todo API（全部直接 fetch）
+// ===============================
+
+// 共用 headers（每次都帶 token）
+
+function authHeaders(extra = {}) {
+  return {
+    authorization: getToken(),
+    ...extra
+  };
+}
+
+// 4.取得 todos
 // GET /todos
-// ===============================
-app.get('/todos', async () => {
-  const res = await fetch(
-    'https://todolist-api.hexschool.io/todos',
-    {
-      headers: {
-        'Authorization': `Bearer ${TOKEN}`
-      }
-    }
-  );
 
-  return await res.json();
-});
+async function getTodos() {
+  const res = await fetch(`${API}/todos`, {
+    headers: authHeaders()
+  });
 
-// ===============================
-// 新增 todo
+  return res.json();
+}
+
+// 5.新增 todo
 // POST /todos
-// ===============================
-app.post('/todos', async (req) => {
-  const { content } = req.body;
 
-  const res = await fetch(
-    'https://todolist-api.hexschool.io/todos',
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${TOKEN}`
-      },
-      body: JSON.stringify({ content })
-    }
-  );
+async function addTodo(content) {
+  const res = await fetch(`${API}/todos`, {
+    method: "POST",
+    headers: authHeaders({
+      "Content-Type": "application/json"
+    }),
+    body: JSON.stringify({ content })
+  });
 
-  return await res.json();
-});
+  return res.json();
+}
 
-// ===============================
-// 刪除 todo
-// DELETE /todos/:id
-// ===============================
-app.delete('/todos/:id', async (req) => {
-  const { id } = req.params;
+// 6.刪除 todo
+// DELETE /todos/{id}
 
-  const res = await fetch(
-    `https://todolist-api.hexschool.io/todos/${id}`,
-    {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${TOKEN}`
-      }
-    }
-  );
+async function deleteTodo(id) {
+  const res = await fetch(`${API}/todos/${id}`, {
+    method: "DELETE",
+    headers: authHeaders()
+  });
 
-  return await res.json();
-});
+  return res.json();
+}
 
-// ===============================
-// 切換完成狀態
-// PATCH /todos/:id/toggle
-// ===============================
-app.post('/todos/:id/toggle', async (req) => {
-  const { id } = req.params;
+// 7.切換完成狀態
+// PATCH /todos/{id}/toggle
 
-  const res = await fetch(
-    `https://todolist-api.hexschool.io/todos/${id}/toggle`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${TOKEN}`
-      }
-    }
-  );
+async function toggleTodo(id) {
+  const res = await fetch(`${API}/todos/${id}/toggle`, {
+    method: "PATCH",
+    headers: authHeaders()
+  });
 
-  return await res.json();
-});
+  return res.json();
+}
 
-// ===============================
-app.listen(3000, () => {
-  console.log('Server running at http://localhost:3000');
-});
+// 頁面刷新時，如果有 token，自動載入 todos
+if (getToken()) {
+  loadTodos();
+}
