@@ -38,7 +38,7 @@ export async function signUp(email, password, nickname) {
     body: JSON.stringify({ 
       email, 
       password,
-      nickname: nickname || email.split('@')[0]
+      nickname: nickname || email.split('@')[0] // 切 mail 前的內容當 nickname
     })
   });
 
