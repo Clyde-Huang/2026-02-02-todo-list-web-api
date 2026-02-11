@@ -1,5 +1,5 @@
 // 匯入 API 函式
-import { // 有幾個就要 import 幾個
+import {
   getToken,
   clearToken,
   login,
@@ -10,6 +10,57 @@ import { // 有幾個就要 import 幾個
   deleteTodo,
   toggleTodo
 } from './api.js';
+
+// =====================================================
+// Toast 通知系統
+// =====================================================
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // 觸發動畫
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  // 3秒後移除
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+// 替代 confirm 的函式
+function showConfirm(message) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'confirm-overlay';
+    
+    const dialog = document.createElement('div');
+    dialog.className = 'confirm-dialog';
+    dialog.innerHTML = `
+      <p>${message}</p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn confirm-cancel">取消</button>
+        <button class="confirm-btn confirm-ok">確定</button>
+      </div>
+    `;
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    setTimeout(() => overlay.classList.add('show'), 10);
+    
+    const handleClick = (result) => {
+      overlay.classList.remove('show');
+      setTimeout(() => overlay.remove(), 300);
+      resolve(result);
+    };
+    
+    dialog.querySelector('.confirm-ok').onclick = () => handleClick(true);
+    dialog.querySelector('.confirm-cancel').onclick = () => handleClick(false);
+  });
+}
 
 // =====================================================
 // 全域變數
@@ -48,7 +99,7 @@ async function loadTodos() {
     }
   } catch (error) {
     console.error("❌ 載入資料失敗:", error);
-    alert("無法載入待辦事項，請重新登入");
+    showToast("無法載入待辦事項，請重新登入", "error");
     clearToken();
     showPage("loginPage");
     todoList = [];
@@ -124,11 +175,11 @@ function handleAddTodo() {
   const text = elements.input.value.trim();
 
   if (text === "") {
-    alert("請輸入內容");
+    showToast("請輸入內容", "warning");
     return;
   }
   if (isLoading) {
-    alert("處理中，請稍候");
+    showToast("處理中，請稍候", "info");
     return;
   }
 
@@ -150,10 +201,11 @@ function handleAddTodo() {
 
       // 渲染畫面
       render();
+      showToast("新增成功", "success");
     })
     .catch(function (error) {
       console.error("❌ 新增失敗:", error);
-      alert("新增待辦事項失敗：" + error.message);
+      showToast("新增待辦事項失敗：" + error.message, "error");
     })
     .finally(function () {
       setLoading(false);
@@ -195,7 +247,7 @@ function handleToggleTodo(id) {
     })
     .catch(function (error) {
       console.error("❌ 更新失敗:", error);
-      alert("更新狀態失敗：" + error.message);
+      showToast("更新狀態失敗：" + error.message, "error");
     })
     .finally(function () {
       setLoading(false);
@@ -203,10 +255,9 @@ function handleToggleTodo(id) {
 }
 
 // 刪除待辦
-function handleDeleteTodo(id) {
-  if (!confirm("確定要刪除該項目?")) {
-    return;
-  }
+async function handleDeleteTodo(id) {
+  const confirmed = await showConfirm("確定要刪除該項目?");
+  if (!confirmed) return;
 
   setLoading(true);
 
@@ -223,10 +274,11 @@ function handleDeleteTodo(id) {
 
       // 渲染畫面
       render();
+      showToast("刪除成功", "success");
     })
     .catch(function (error) {
       console.error("❌ 刪除失敗:", error);
-      alert("刪除失敗：" + error.message);
+      showToast("刪除失敗：" + error.message, "error");
     })
     .finally(function () {
       setLoading(false);
@@ -234,22 +286,21 @@ function handleDeleteTodo(id) {
 }
 
 // 清除已完成項目
-function handleClearCompleted() {
+async function handleClearCompleted() {
   if (isLoading) {
-    alert("處理中，請稍候");
+    showToast("處理中，請稍候", "info");
     return;
   }
 
   const completedIds = todoList.filter((t) => t.status).map((t) => t.id);
 
   if (completedIds.length === 0) {
-    alert("沒有已完成項目可清除");
+    showToast("沒有已完成項目可清除", "info");
     return;
   }
 
-  if (!confirm(`確定要清除 ${completedIds.length} 個已完成項目嗎？`)) {
-    return;
-  }
+  const confirmed = await showConfirm(`確定要清除 ${completedIds.length} 個已完成項目嗎？`);
+  if (!confirmed) return;
 
   setLoading(true);
 
@@ -267,10 +318,11 @@ function handleClearCompleted() {
 
       todoList = todoList.filter((t) => !t.status);
       render();
+      showToast("清除成功", "success");
     })
     .catch(function (error) {
       console.error("❌ 清除失敗:", error);
-      alert("清除已完成項目失敗：" + error.message);
+      showToast("清除已完成項目失敗：" + error.message, "error");
     })
     .finally(function () {
       setLoading(false);
@@ -371,7 +423,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const password = document.getElementById("loginPwd").value.trim();
 
     if (!email || !password) {
-      alert("請輸入 Email 和密碼");
+      showToast("請輸入 Email 和密碼", "warning");
       return;
     }
 
@@ -379,7 +431,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await login(email, password);
 
       if (data.status) {
-        alert("登入成功！");
+        showToast("登入成功！", "success");
         showPage("todoListPage");
 
         // 顯示使用者名稱
@@ -392,11 +444,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // 清空表單
         document.getElementById("loginForm").reset();
       } else {
-        alert(data.message || "登入失敗");
+        showToast(data.message || "登入失敗", "error");
       }
     } catch (error) {
       console.error("❌ 登入錯誤:", error);
-      alert("登入失敗，請稍後再試");
+      showToast("登入失敗，請稍後再試", "error");
     }
   });
 
@@ -412,12 +464,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const nickname = document.getElementById("signUpNickname").value.trim();
 
     if (!email || !password) {
-      alert("請輸入 Email 和密碼");
+      showToast("請輸入 Email 和密碼", "warning");
       return;
     }
 
     if (password !== password2) {
-      alert("兩次密碼輸入不一致");
+      showToast("兩次密碼輸入不一致", "warning");
       return;
     }
 
@@ -425,15 +477,15 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await signUp(email, password, nickname);
 
       if (data.status) {
-        alert("註冊成功！請登入");
+        showToast("註冊成功！請登入", "success");
         showPage("loginPage");
         document.getElementById("signUpForm").reset();
       } else {
-        alert(data.message || "註冊失敗");
+        showToast(data.message || "註冊失敗", "error");
       }
     } catch (error) {
       console.error("❌ 註冊錯誤:", error);
-      alert("註冊失敗，請稍後再試");
+      showToast("註冊失敗，請稍後再試", "error");
     }
   });
 
@@ -447,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function () {
     todoList = [];
     currentFilter = "all";
 
-    alert("已登出");
+    showToast("已登出", "info");
     showPage("loginPage");
   });
 
