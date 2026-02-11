@@ -1,4 +1,16 @@
-/* eslint-disable no-undef */
+// 匯入 API 函式
+import { // 有幾個就要 import 幾個
+  getToken,
+  clearToken,
+  login,
+  logout,
+  signUp,
+  getTodos,
+  addTodo,
+  deleteTodo,
+  toggleTodo
+} from './api.js';
+
 // =====================================================
 // 全域變數
 // =====================================================

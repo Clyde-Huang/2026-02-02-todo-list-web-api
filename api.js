@@ -8,28 +8,28 @@ const API = "https://todolist-api.hexschool.io";
 // ************************************************
 
 // =====================================================
-// Token 放 localStorage :好配合 github page / 簡單
+// Token 放 localStorage : 好配合 github page & 簡單
 // =====================================================
 
 // 取得 token 方法
-function getToken() {
+export function getToken() {
   return localStorage.getItem("token");
 }
 
 // 儲存 token 方法
-function setToken(token) {
+export function setToken(token) {
   localStorage.setItem("token", token);
 }
 
 // 清除 token 方法
-function clearToken() {
+export function clearToken() {
   localStorage.removeItem("token");
 }
 
 // 1.註冊
 // POST /users/sign_up
 
-async function signUp(email, password, nickname) {
+export async function signUp(email, password, nickname) {
   const res = await fetch(`${API}/users/sign_up`, {
     method: "POST",
     headers: {
@@ -49,7 +49,7 @@ async function signUp(email, password, nickname) {
 // 2.登入
 // POST /users/sign_in
 
-async function login(email, password) {
+export async function login(email, password) {
   const res = await fetch(`${API}/users/sign_in`, {
     method: "POST",
     headers: {
@@ -71,7 +71,7 @@ async function login(email, password) {
 // 3.登出
 // POST /users/sign_out
 
-async function logout() {
+export async function logout() {
   const token = getToken();
 
   // 通知後端登出（非必須，但有 API）
@@ -102,7 +102,7 @@ function authHeaders(extra = {}) {
 // 4.取得 todos
 // GET /todos
 
-async function getTodos() {
+export async function getTodos() {
   const res = await fetch(`${API}/todos`, {
     headers: authHeaders()
   });
@@ -113,7 +113,7 @@ async function getTodos() {
 // 5.新增 todo
 // POST /todos
 
-async function addTodo(content) {
+export async function addTodo(content) {
   const res = await fetch(`${API}/todos`, {
     method: "POST",
     headers: authHeaders({
@@ -128,7 +128,7 @@ async function addTodo(content) {
 // 6.刪除 todo
 // DELETE /todos/{id}
 
-async function deleteTodo(id) {
+export async function deleteTodo(id) {
   const res = await fetch(`${API}/todos/${id}`, {
     method: "DELETE",
     headers: authHeaders()
@@ -140,7 +140,7 @@ async function deleteTodo(id) {
 // 7.切換完成狀態
 // PATCH /todos/{id}/toggle
 
-async function toggleTodo(id) {
+export async function toggleTodo(id) {
   const res = await fetch(`${API}/todos/${id}/toggle`, {
     method: "PATCH",
     headers: authHeaders()
