@@ -1,0 +1,12 @@
+name:測
+
+on :
+push:
+branches:[learn]
+
+job:
+task_1:
+runs-on:ubuntu-latest
+steps:
+- name:檢查路徑
+run:echo
