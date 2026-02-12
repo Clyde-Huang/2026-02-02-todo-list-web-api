@@ -1,0 +1,24 @@
+name: 測
+
+on:
+  push:
+    branches: [learn]
+
+jobs: 
+  task_1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 檢查路徑
+        run: pwd 
+
+      - name: 檢查node.js版本
+        run: node -v
+
+  task_2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 下載repo
+        uses: actions/checkout@v4 
+
+      - name: 顯示所有檔案
+        run: ls -R 
